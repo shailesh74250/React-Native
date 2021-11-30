@@ -1,4 +1,8 @@
+import 'react-native-gesture-handler';
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import {
   StyleSheet,
   SafeAreaView,
@@ -11,7 +15,21 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
+import HomeScreen from './screens/HomeScreen';
+import DetailsScreen from './screens/DetailsScreen';
+
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+
+
+import MainTabScreen from './screens/MainTabScreen';
+
 const COLORS = {primary: '#1f145c', white: '#fff'};
+
+const HomeStack = createStackNavigator();
+const DetailsStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 const App = () => {
   const [todos, setTodos] = React.useState([]); //used to store all the todos
@@ -24,6 +42,10 @@ const App = () => {
   React.useEffect(() => {
     saveTodoToUserDevice(todos);
   }, [todos]);
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
 
   const addTodo = () => {
     if (textInput == '') {
@@ -117,11 +139,12 @@ const App = () => {
     );
   };
   return (
-    <SafeAreaView
+    <NavigationContainer
       style={{
         flex: 1,
         backgroundColor: 'white',
       }}>
+
       <View style={styles.header}>
         <Text
           style={{
@@ -153,8 +176,15 @@ const App = () => {
             <Icon name="add" color="white" size={30} />
           </View>
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </View>  
+      <View>
+       <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={MainTabScreen} />
+        <Drawer.Screen name="Details" component={DetailsScreen} />
+      </Drawer.Navigator> 
+     </View>
+    </NavigationContainer>
+    
   );
 };
 
